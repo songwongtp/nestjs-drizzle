@@ -1,6 +1,5 @@
 import {
   serial,
-  text,
   timestamp,
   pgTable,
   pgEnum,
@@ -12,6 +11,7 @@ import {
   uuid,
   real,
   primaryKey,
+  text,
 } from 'drizzle-orm/pg-core';
 
 export const UserRole = pgEnum('userRole', ['ADMIN', 'BASIC']);
@@ -24,7 +24,7 @@ export const UserTable = pgTable(
     age: integer('age').notNull(),
     email: varchar('email', { length: 255 }).notNull().unique(),
     role: text('role').$type<'admin' | 'basic'>(),
-    userRole: UserRole('userRole').default('BASIC').notNull(),
+    userRole: UserRole('userRole').default('BASIC'),
   },
   (table) => {
     return {
