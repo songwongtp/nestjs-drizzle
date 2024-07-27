@@ -1,3 +1,20 @@
+## Local Development
+
+- (Optional) Create Postgres DB
+  - `docker-compose -f docker-compose-db.dev.yaml up --build`
+
+## Drizzle Commands
+
+- Generate a schema migration after some schema update
+
+  - `pnpm pg:generate --name <MIGRATION_NAME>`
+
+- Apply migration to a database
+
+  - `pnpm pg:migrate`
+
+---
+
 <p align="center">
   <a href="http://nestjs.com/" target="blank"><img src="https://nestjs.com/img/logo-small.svg" width="200" alt="Nest Logo" /></a>
 </p>
