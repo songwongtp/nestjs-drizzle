@@ -81,6 +81,7 @@ export const PostCategoryTable = pgTable(
 );
 
 // RELATIONS (drizzle level references)
+// - only used by ORM/prisma `query` style
 
 export const UserTableRelations = relations(UserTable, ({ one, many }) => {
   return {
