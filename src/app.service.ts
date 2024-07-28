@@ -9,4 +9,8 @@ export class AppService {
   createUser({ name, age, email }: CreateUserDto) {
     return this.repository.createUser(name, age, email);
   }
+
+  getUsers() {
+    return this.repository.getUsers();
+  }
 }

@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { DrizzleService } from './drizzle/drizzle.service';
-import { UserTable } from 'drizzle/schema';
+import { sql, UserTable } from 'drizzle';
 
 @Injectable()
 export class AppRepository {
@@ -16,6 +16,20 @@ export class AppRepository {
     };
     return this.drizzle.db.insert(UserTable).values(newUser).returning({
       id: UserTable.id,
+    });
+  }
+
+  async getUsers() {
+    // `query` - prisma like syntax for select
+    return this.drizzle.db.query.UserTable.findMany({
+      columns: { name: true },
+      extras: {
+        lowerCaseName: sql<string>`lower(${UserTable.name})`.as(
+          'lowerCaseName',
+        ),
+      },
+      // offset: 0,
+      // limit: 1,
     });
   }
 }

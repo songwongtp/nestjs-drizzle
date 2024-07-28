@@ -1,3 +1,3 @@
-export { PostgresJsDatabase } from 'drizzle-orm/postgres-js';
+export { sql } from 'drizzle-orm';
 export * from './db';
-export * as schema from './schema';
+export * from './schema';
