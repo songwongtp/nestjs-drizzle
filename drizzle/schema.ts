@@ -1,17 +1,17 @@
 import {
-  serial,
-  timestamp,
-  pgTable,
-  pgEnum,
-  varchar,
-  integer,
-  index,
-  unique,
   boolean,
-  uuid,
-  real,
+  index,
+  integer,
+  pgEnum,
+  pgTable,
   primaryKey,
+  real,
+  serial,
   text,
+  timestamp,
+  unique,
+  uuid,
+  varchar,
 } from 'drizzle-orm/pg-core';
 
 export const UserRole = pgEnum('userRole', ['ADMIN', 'BASIC']);
@@ -38,7 +38,8 @@ export const userPreferenceTable = pgTable('userPreference', {
   id: serial('id'),
   emailUpdatable: boolean('emailUpdatable').notNull().default(false),
   userId: uuid('userId')
-    .references(() => UserTable.id)
+    .unique()
+    .references(() => UserTable.id) // database level reference
     .notNull(),
 });
 
