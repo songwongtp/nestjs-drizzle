@@ -1,17 +1,18 @@
+import { relations } from 'drizzle-orm';
 import {
-  boolean,
-  index,
-  integer,
-  pgEnum,
-  pgTable,
-  primaryKey,
-  real,
   serial,
-  text,
   timestamp,
-  unique,
-  uuid,
+  pgTable,
+  pgEnum,
   varchar,
+  integer,
+  index,
+  unique,
+  boolean,
+  uuid,
+  real,
+  primaryKey,
+  text,
 } from 'drizzle-orm/pg-core';
 
 export const UserRole = pgEnum('userRole', ['ADMIN', 'BASIC']);
@@ -38,8 +39,11 @@ export const userPreferenceTable = pgTable('userPreference', {
   id: serial('id'),
   emailUpdatable: boolean('emailUpdatable').notNull().default(false),
   userId: uuid('userId')
+    // drizzle relations `one-to-one` does not enforce uniqueness in the database
+    // need to explicitly declare `unique` or `primaryKey` here
     .unique()
-    .references(() => UserTable.id) // database level reference
+    // database level reference
+    .references(() => UserTable.id)
     .notNull(),
 });
 
@@ -72,6 +76,57 @@ export const PostCategoryTable = pgTable(
   (table) => {
     return {
       pk: primaryKey({ columns: [table.postId, table.categoryId] }),
+    };
+  },
+);
+
+// RELATIONS (drizzle level references)
+
+export const UserTableRelations = relations(UserTable, ({ one, many }) => {
+  return {
+    preference: one(userPreferenceTable),
+    posts: many(PostTable),
+  };
+});
+
+export const UserPreferenceTableRelations = relations(
+  userPreferenceTable,
+  ({ one }) => {
+    return {
+      user: one(UserTable, {
+        fields: [userPreferenceTable.userId],
+        references: [UserTable.id],
+      }),
+    };
+  },
+);
+
+export const PostTableRelations = relations(PostTable, ({ one, many }) => {
+  return {
+    author: one(UserTable, {
+      fields: [PostTable.authorId],
+      references: [UserTable.id],
+    }),
+    postCategories: many(PostCategoryTable),
+  };
+});
+
+export const CategoryTableRelations = relations(CategoryTable, ({ many }) => {
+  return { postCategories: many(PostCategoryTable) };
+});
+
+export const PostCategoryTableRelations = relations(
+  PostCategoryTable,
+  ({ one }) => {
+    return {
+      post: one(PostTable, {
+        fields: [PostCategoryTable.postId],
+        references: [PostTable.id],
+      }),
+      category: one(CategoryTable, {
+        fields: [PostCategoryTable.categoryId],
+        references: [CategoryTable.id],
+      }),
     };
   },
 );
